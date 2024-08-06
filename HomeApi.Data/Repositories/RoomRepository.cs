@@ -2,6 +2,7 @@
 using HomeApi.Data.Models;
 using HomeApi.Data.Queries;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HomeApi.Data.Repositories
 {
@@ -50,14 +51,32 @@ namespace HomeApi.Data.Repositories
             return await _context.Rooms.ToArrayAsync();
         }
 
-        public async Task<Room?> Update(Room room)
+        public async Task<Room?> Update(Room room, UpdateRoomQuery query)
         {
+            string oldName=null;
+            // Если в запрос переданы параметры для обновления — проверяем их на null
+            // И если нужно — обновляем устройство
+            if (!string.IsNullOrEmpty(query.NewName))
+            {
+                oldName = room.Name;
+                room.Name = query.NewName;
+            } 
+            if (query.NewArea.HasValue)
+                room.Area = query.NewArea.Value;
+            if (query.NewVoltage.HasValue)
+                room.Voltage = query.NewVoltage.Value;
+            if(query.NewGasConnected.HasValue)
+                room.GasConnected = query.NewGasConnected.Value;
+
+
             Room? result = null;
             var entry = _context.Entry(room);
             if (entry.State == EntityState.Modified)
               result= _context.Rooms.Update(room).Entity;
 
-           await _context.SaveChangesAsync();
+           var devices = _context.Devices.Where(x=>x.Location== oldName).ExecuteUpdate(f => f.SetProperty(x => x.Location, x => room.Name));
+
+            await _context.SaveChangesAsync();
 
            return result;
         }

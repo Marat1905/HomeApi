@@ -3,6 +3,7 @@ using Azure.Core;
 using HomeApi.Contracts.Models.Devices;
 using HomeApi.Contracts.Models.Rooms;
 using HomeApi.Data.Models;
+using HomeApi.Data.Queries;
 using HomeApi.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -73,6 +74,8 @@ namespace HomeApi.Controllers
             var withSameName = await _repository.GetRoomByName(request.NewName);
             if (withSameName != null)
                 return StatusCode(400, $"Ошибка: Комната с именем {request.NewName} уже существует в нашем доме. Выберите другое имя!");
+
+            await _repository.Update(room,new UpdateRoomQuery(request.NewName,request.NewArea,request.NewGasConnected, request.NewVoltage));
 
 
             return StatusCode(200);
