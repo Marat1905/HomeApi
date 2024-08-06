@@ -46,7 +46,7 @@ namespace HomeApi.Controllers
             return StatusCode(200, resp);
         }
 
-        // TODO: Задание: напишите запрос на удаление устройства
+       
 
         /// <summary>
         /// Добавление нового устройства
@@ -99,7 +99,7 @@ namespace HomeApi.Controllers
             return StatusCode(200, $"Устройство обновлено! Имя - {device.Name}, Серийный номер - {device.SerialNumber},  Комната подключения - {device.Room.Name}");
         }
 
-
+        // TODO: Задание: напишите запрос на удаление устройства
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
