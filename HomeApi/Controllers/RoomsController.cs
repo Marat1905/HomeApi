@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using HomeApi.Contracts.Models.Devices;
 using HomeApi.Contracts.Models.Rooms;
 using HomeApi.Data.Models;
@@ -58,6 +59,23 @@ namespace HomeApi.Controllers
             }
 
             return StatusCode(409, $"Ошибка: Комната {request.Name} уже существует.");
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateRoom([FromRoute] Guid id,
+            [FromBody] EditRoomRequest request)
+        {
+            var room = await _repository.GetRoomById(id);
+            if (room == null)
+                return StatusCode(409, $"Ошибка: Комната c идентификатором {id}  не найдена");
+
+            var withSameName = await _repository.GetRoomByName(request.NewName);
+            if (withSameName != null)
+                return StatusCode(400, $"Ошибка: Комната с именем {request.NewName} уже существует в нашем доме. Выберите другое имя!");
+
+
+            return StatusCode(200);
         }
     }
 }

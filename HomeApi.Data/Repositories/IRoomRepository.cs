@@ -11,5 +11,7 @@ namespace HomeApi.Data.Repositories
         Task AddRoom(Room room);
 
         Task<Room[]> GetRooms();
+
+        public Task<Room?> GetRoomById(Guid id);
     }
 }

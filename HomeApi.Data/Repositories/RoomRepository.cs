@@ -1,5 +1,6 @@
 ﻿using HomeApi.Data.Context;
 using HomeApi.Data.Models;
+using HomeApi.Data.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomeApi.Data.Repositories
@@ -25,6 +26,14 @@ namespace HomeApi.Data.Repositories
         }
 
         /// <summary>
+        /// Найти устройство по идентификатору
+        /// </summary>
+        public async Task<Room?> GetRoomById(Guid id)
+        {
+            return await _context.Rooms.FirstOrDefaultAsync(x=>x.Id==id);
+        }
+
+        /// <summary>
         ///  Добавить новую комнату
         /// </summary>
         public async Task AddRoom(Room room)
@@ -40,5 +49,42 @@ namespace HomeApi.Data.Repositories
         {
             return await _context.Rooms.ToArrayAsync();
         }
+
+        public async Task<Room?> Update(Room room)
+        {
+            Room? result = null;
+            var entry = _context.Entry(room);
+            if (entry.State == EntityState.Modified)
+              result= _context.Rooms.Update(room).Entity;
+
+           await _context.SaveChangesAsync();
+
+           return result;
+        }
+
+        ///// <summary>
+        ///// Обновить существующее устройство
+        ///// </summary>
+        //public async Task UpdateDevice(Device device, Room room, UpdateDeviceQuery query)
+        //{
+        //    // Привязываем новое устройство к соответствующей комнате перед сохранением
+        //    device.RoomId = room.Id;
+        //    device.Room = room;
+
+        //    // Если в запрос переданы параметры для обновления — проверяем их на null
+        //    // И если нужно — обновляем устройство
+        //    if (!string.IsNullOrEmpty(query.NewName))
+        //        device.Name = query.NewName;
+        //    if (!string.IsNullOrEmpty(query.NewSerial))
+        //        device.SerialNumber = query.NewSerial;
+
+        //    // Добавляем в базу
+        //    var entry = _context.Entry(device);
+        //    if (entry.State == EntityState.Detached)
+        //        _context.Devices.Update(device);
+
+        //    // Сохраняем изменения в базе
+        //    await _context.SaveChangesAsync();
+        //}
     }
 }
