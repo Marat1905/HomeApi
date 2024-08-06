@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Core;
+using HomeApi.Configuration;
+using HomeApi.Contracts.Home;
 using HomeApi.Contracts.Models.Devices;
 using HomeApi.Contracts.Models.Rooms;
 using HomeApi.Data.Models;
@@ -75,10 +77,12 @@ namespace HomeApi.Controllers
             if (withSameName != null)
                 return StatusCode(400, $"Ошибка: Комната с именем {request.NewName} уже существует в нашем доме. Выберите другое имя!");
 
-            await _repository.Update(room,new UpdateRoomQuery(request.NewName,request.NewArea,request.NewGasConnected, request.NewVoltage));
+           var roomresponse= await _repository.Update(room,new UpdateRoomQuery(request.NewName,request.NewArea,request.NewGasConnected, request.NewVoltage));
 
+            // Получим запрос, смапив конфигурацию на модель запроса
+            var infoResponse = _mapper.Map<Room, InfoRoomResponse>(roomresponse);
 
-            return StatusCode(200);
+            return StatusCode(200, infoResponse);
         }
     }
 }
