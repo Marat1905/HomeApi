@@ -97,7 +97,7 @@ namespace HomeApi.Data.Repositories
         {
             // Удаление мз базы
             var entry = _context.Entry(device);
-            if (entry.State == EntityState.Detached)
+            if (entry.State == EntityState.Unchanged)
                 _context.Devices.Remove(device);
 
             // Сохранение изменений
