@@ -9,5 +9,7 @@ namespace HomeApi.Data.Repositories
     {
         Task<Room> GetRoomByName(string name);
         Task AddRoom(Room room);
+
+        Task<Room[]> GetRooms();
     }
 }
