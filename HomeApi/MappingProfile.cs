@@ -31,6 +31,8 @@ namespace HomeApi
             CreateMap<Device, DeviceView>();
 
             CreateMap<Room, RoomView>();
+
+            CreateMap<Room, InfoRoomResponse>();
         }
     }
 }
